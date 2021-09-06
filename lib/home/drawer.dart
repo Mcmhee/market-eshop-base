@@ -32,25 +32,6 @@ class _AppDrawerState extends State<AppDrawer> {
             shrinkWrap: true,
             children: <Widget>[
               ListTile(
-                leading: Icon(Icons.home,
-                    color: Theme.of(context).colorScheme.secondary),
-                title: const Text('Home'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.shopping_basket,
-                    color: Theme.of(context).colorScheme.secondary),
-                title: const Text('Shop'),
-                trailing: Text('New',
-                    style: TextStyle(color: Theme.of(context).primaryColor)),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/shop');
-                },
-              ),
-              ListTile(
                 leading: Icon(Icons.category,
                     color: Theme.of(context).colorScheme.secondary),
                 title: const Text('Categorise'),
@@ -95,16 +76,17 @@ class _AppDrawerState extends State<AppDrawer> {
                   Navigator.pushNamed(context, '/cart');
                 },
               ),
-              ListTile(
-                leading: Icon(Icons.lock,
-                    color: Theme.of(context).colorScheme.secondary),
-                title: const Text('Login'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/auth');
-                },
+              const Divider(
+                height: 20,
+                color: Colors.black,
               ),
-              const Divider(),
+              const SizedBox(
+                height: 120.0,
+              ),
+              const Divider(
+                height: 20,
+                color: Colors.black,
+              ),
               ListTile(
                 leading: Icon(Icons.settings,
                     color: Theme.of(context).colorScheme.secondary),
@@ -112,6 +94,15 @@ class _AppDrawerState extends State<AppDrawer> {
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/settings');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.lock,
+                    color: Theme.of(context).colorScheme.secondary),
+                title: const Text('Login'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/auth');
                 },
               ),
               ListTile(

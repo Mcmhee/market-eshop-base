@@ -1,14 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
+import 'package:market/providers/products.dart';
+import 'package:provider/provider.dart';
 
-class Products extends StatelessWidget {
+class ProductsDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final imageUrl = ModalRoute.of(context)!.settings.arguments;
+    final productId = ModalRoute.of(context)!.settings.arguments as String;
+    final tappedProductDetails =
+        Provider.of<ProductsProvider>(context, listen: false)
+            .findById(productId);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Product Detail'),
+        title: Text(tappedProductDetails.productName),
       ),
       body: SafeArea(
         top: false,
@@ -21,10 +26,10 @@ class Products extends StatelessWidget {
                 width: double.infinity,
                 height: 260,
                 child: Hero(
-                  tag: imageUrl!,
+                  tag: productId,
                   child: CachedNetworkImage(
                     fit: BoxFit.cover,
-                    imageUrl: imageUrl.toString(),
+                    imageUrl: tappedProductDetails.productImage,
                     placeholder: (context, url) =>
                         const Center(child: CircularProgressIndicator()),
                     errorWidget: (context, url, error) =>
@@ -38,11 +43,11 @@ class Products extends StatelessWidget {
                   children: <Widget>[
                     Container(
                       alignment: const Alignment(-1.0, -1.0),
-                      child: const Padding(
-                        padding: EdgeInsets.only(top: 15, bottom: 15),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 15, bottom: 15),
                         child: Text(
-                          'Product Title Name',
-                          style: TextStyle(
+                          tappedProductDetails.productName,
+                          style: const TextStyle(
                               color: Colors.black,
                               fontSize: 24,
                               fontWeight: FontWeight.w600),
@@ -59,17 +64,17 @@ class Products extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(right: 10.0),
                                 child: Text(
-                                  '\$90',
-                                  style: TextStyle(
-                                    color: Theme.of(context).primaryColor,
+                                  "N${tappedProductDetails.productPrice.toString()}",
+                                  style: const TextStyle(
+                                    color: Colors.red,
                                     fontSize: 20,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
-                              const Text('\$190',
-                                  style: TextStyle(
-                                      color: Colors.black,
+                              Text(tappedProductDetails.productDiscount,
+                                  style: const TextStyle(
+                                      color: Colors.green,
                                       fontSize: 16,
                                       decoration: TextDecoration.lineThrough)),
                             ],

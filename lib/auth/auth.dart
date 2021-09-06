@@ -17,17 +17,17 @@ class Auth extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.lock_open),
+            icon: Icon(Icons.admin_panel_settings_outlined),
             label: "Sign In",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.people_outline),
+            icon: Icon(Icons.no_accounts),
             label: 'Create Account',
           ),
         ],
         currentIndex: authBlock.currentIndex,
         selectedItemColor: Colors.amber[800],
-        onTap: (num) {
+        onTap: (int num) {
           authBlock.currentIndex = num;
         },
       ),

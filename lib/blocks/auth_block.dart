@@ -31,7 +31,7 @@ class AuthBlock extends ChangeNotifier {
   }
 
   // Loading
-  bool _isLoggedIn = false;
+  bool _isLoggedIn = true;
   bool get isLoggedIn => _isLoggedIn;
   set isLoggedIn(bool isUserExist) {
     _isLoggedIn = isUserExist;
@@ -39,11 +39,18 @@ class AuthBlock extends ChangeNotifier {
   }
 
   // user
-  Map _user = {};
+  Map _user = {
+    'user_email': 'dommy@gmail.com',
+    'user_display_name': 'John Doe'
+  };
   Map get user => _user;
   setUser() async {
     _user = await _authService.getUser();
-    isLoggedIn = _user == null ? false : true;
+    if (_user.isEmpty) {
+      isLoggedIn = false;
+    } else {
+      isLoggedIn = true;
+    }
     notifyListeners();
   }
 

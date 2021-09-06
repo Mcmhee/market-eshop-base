@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:market/product_detail.dart';
+import 'package:market/productBlock/productScreen.dart';
+import 'package:market/productBlock/product_detail.dart';
+import 'package:market/providers/products.dart';
 import 'package:market/settings.dart';
-import 'package:market/shop/shop.dart';
+
 import 'package:market/wishlist.dart';
 import 'package:provider/provider.dart';
 
@@ -19,21 +21,23 @@ void main() {
         ChangeNotifierProvider<AuthBlock>.value(
           value: AuthBlock(),
         ),
+        ChangeNotifierProvider.value(
+          value: ProductsProvider(),
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-            primaryColor: Colors.deepOrange.shade500, fontFamily: 'Lato'),
+        theme: ThemeData(primaryColor: Colors.lime, fontFamily: 'Lato'),
         initialRoute: '/',
         routes: <String, WidgetBuilder>{
           '/': (BuildContext context) => Home(),
           '/auth': (BuildContext context) => Auth(),
-          '/shop': (BuildContext context) => Shop(),
           '/categorise': (BuildContext context) => Categorise(),
           '/wishlist': (BuildContext context) => WishList(),
           '/cart': (BuildContext context) => CartList(),
           '/settings': (BuildContext context) => Settings(),
-          '/products': (BuildContext context) => Products()
+          '/productsDetail': (BuildContext context) => ProductsDetail(),
+          '/productsScreen': (BuildContext context) => ProductScreen(),
         },
       ),
     ),

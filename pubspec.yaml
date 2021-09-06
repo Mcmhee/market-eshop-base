@@ -68,6 +68,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/images/cats/
     - assets/i18n/en.json
     - assets/i18n/ar.json
     - assets/images/drawer-header.jpg
