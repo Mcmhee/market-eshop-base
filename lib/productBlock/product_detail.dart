@@ -1,7 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
-import 'package:market/providers/products.dart';
+import 'package:market/cartBlock/cart.dart';
+import 'package:market/productBlock/providers/products.dart';
 import 'package:provider/provider.dart';
 
 class ProductsDetail extends StatelessWidget {
@@ -11,6 +12,7 @@ class ProductsDetail extends StatelessWidget {
     final tappedProductDetails =
         Provider.of<ProductsProvider>(context, listen: false)
             .findById(productId);
+    final cartInstance = Provider.of<Carts>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text(tappedProductDetails.productName),
@@ -115,7 +117,36 @@ class ProductsDetail extends StatelessWidget {
                                 style: TextStyle(
                                     color: Colors.black, fontSize: 16),
                               ),
-                            ))
+                            )),
+                        ElevatedButton(
+                          child: Text(
+                            "Add to Cart".toUpperCase(),
+                            style: const TextStyle(
+                              fontSize: 20.0,
+                            ),
+                          ),
+                          style: ButtonStyle(
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(Colors.red),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                side: const BorderSide(color: Colors.red),
+                              ),
+                            ),
+                          ),
+                          onPressed: () {
+                            cartInstance.addToCart(
+                              tappedProductDetails.productid,
+                              tappedProductDetails.productPrice,
+                              tappedProductDetails.productName,
+                              tappedProductDetails.productImage,
+                            );
+                          },
+                        )
                       ],
                     ),
                   ],

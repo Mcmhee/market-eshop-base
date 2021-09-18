@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:market/blocks/auth_block.dart';
+import 'package:market/cartBlock/cart.dart';
+import 'package:market/productBlock/providers/products.dart';
 import 'package:provider/provider.dart';
 
 class AppDrawer extends StatefulWidget {
@@ -10,6 +12,7 @@ class AppDrawer extends StatefulWidget {
 class _AppDrawerState extends State<AppDrawer> {
   @override
   Widget build(BuildContext context) {
+    final wishlistbanner = Provider.of<ProductsProvider>(context);
     AuthBlock auth = Provider.of<AuthBlock>(context);
     return Column(
       children: <Widget>[
@@ -50,8 +53,10 @@ class _AppDrawerState extends State<AppDrawer> {
                     shape: BoxShape.circle,
                     color: Theme.of(context).primaryColor,
                   ),
-                  child: const Text('4',
-                      style: TextStyle(color: Colors.white, fontSize: 10.0)),
+                  child: Text(
+                    wishlistbanner.numberofFav.toString(),
+                    style: const TextStyle(color: Colors.white, fontSize: 10.0),
+                  ),
                 ),
                 onTap: () {
                   Navigator.pop(context);
@@ -68,12 +73,23 @@ class _AppDrawerState extends State<AppDrawer> {
                     shape: BoxShape.circle,
                     color: Theme.of(context).primaryColor,
                   ),
-                  child: const Text('2',
-                      style: TextStyle(color: Colors.white, fontSize: 10.0)),
+                  child: Text(
+                    '${Provider.of<Carts>(context).carts.length}',
+                    style: const TextStyle(color: Colors.white, fontSize: 10.0),
+                  ),
                 ),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/cart');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.money,
+                    color: Theme.of(context).colorScheme.secondary),
+                title: const Text('My Orders'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/orderScreen');
                 },
               ),
               const Divider(
