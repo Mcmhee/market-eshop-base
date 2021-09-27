@@ -11,7 +11,7 @@ class ProductView extends StatelessWidget {
   Widget build(BuildContext context) {
     //================ instance of Products
     final providerProductData = Provider.of<ProductsProvider>(context);
-    final productList = providerProductData.productItem;
+    final productList = providerProductData.productItems;
 
     return GridView.builder(
         shrinkWrap: true,

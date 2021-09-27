@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'package:market/orderBlock/order.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +13,23 @@ class OrderScreen extends StatefulWidget {
 
 class _OrderScreenState extends State<OrderScreen> {
   bool _isExpanded = false;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero).then((value) async {
+      setState(() {
+        _isLoading = true;
+      });
+      await Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
+    }).then((value) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final orderInstance = Provider.of<Orders>(context);
@@ -19,65 +37,85 @@ class _OrderScreenState extends State<OrderScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Order'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: IconButton(
+              onPressed: () {
+                setState(() {
+                  _isExpanded = !_isExpanded;
+                });
+              },
+              icon: Icon(_isExpanded ? Icons.visibility_off : Icons.visibility),
+            ),
+          ),
+        ],
       ),
-      body: ListView.builder(
-        itemCount: orderInstance.orders.length,
-        itemBuilder: (context, index) => Card(
-          margin: const EdgeInsets.all(10.0),
-          child: Column(
-            children: [
-              ListTile(
-                title: Text("\$${orderInstance.orders[index].amount}"),
-                subtitle: Text(
-                  DateFormat('dd/MM/yyy hh:mm')
-                      .format(orderInstance.orders[index].dateTime),
-                ),
-                trailing: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isExpanded = !_isExpanded;
-                    });
-                  },
-                  icon:
-                      Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView.builder(
+              itemCount: orderInstance.orders.length,
+              itemBuilder: (context, index) => Card(
+                margin: const EdgeInsets.all(10.0),
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text("\$${orderInstance.orders[index].amount}"),
+                      subtitle: Text(
+                        DateFormat('dd/MM/yyy hh:mm')
+                            .format(orderInstance.orders[index].dateTime),
+                      ),
+                      // orderInstance.orders[index].dateTime),
+                      trailing: IconButton(
+                        onPressed: () {
+                          orderInstance
+                              .deleteOrder(orderInstance.orders[index].id);
+                        },
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ),
+                    if (_isExpanded)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        height: min(
+                          orderInstance.orders.length * 10 + 10,
+                          150,
+                        ),
+                        child: ListView(
+                          children: orderInstance.orders[index].orderItems
+                              .map((orderItem) => Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        orderItem.productName,
+                                        style: const TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${orderItem.price} X ${orderItem.productQuantity}',
+                                        style: const TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-              if (_isExpanded)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  height: min(
-                    orderInstance.orders.length * 20 + 10,
-                    100,
-                  ),
-                  child: ListView(
-                    children: orderInstance.orders[index].ordersItem
-                        .map((orderItem) => Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  orderItem.productName,
-                                  style: const TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  '${orderItem.price} X ${orderItem.productQuantity}',
-                                  style: const TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ))
-                        .toList(),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

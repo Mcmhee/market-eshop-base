@@ -10,6 +10,8 @@ class CartList extends StatefulWidget {
 }
 
 class _CartListState extends State<CartList> {
+  bool _orderButton = false;
+
   @override
   Widget build(BuildContext context) {
     final cartInstance = Provider.of<Carts>(context);
@@ -268,30 +270,65 @@ class _CartListState extends State<CartList> {
                 minWidth: double.infinity,
                 height: 40.0,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Navigator.pushNamed(
-                    //   context,
-                    //   '/orderScreen',
-                    // );
-                    Provider.of<Orders>(context, listen: false).addOrder(
-                      cartInstance.carts.values.toList(),
-                      cartInstance.total,
-                    );
-                    cartInstance.clearCart();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Your Order have been sent"),
-                        duration: Duration(seconds: 1),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    "CHECKOUT",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30.0,
-                    ),
-                  ),
+                  onPressed: cartInstance.total <= 0
+                      ? null
+                      : () async {
+                          try {
+                            setState(() {
+                              _orderButton = true;
+                            });
+                            await Provider.of<Orders>(context, listen: false)
+                                .addOrder(
+                              cartInstance.carts.values.toList(),
+                              cartInstance.total,
+                            )
+                                .then((value) {
+                              cartInstance.clearCart();
+                              setState(() {
+                                _orderButton = false;
+                              });
+                            });
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Your Order have been sent"),
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                          } catch (e) {
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: const Text("Opps an error occured"),
+                                content: Text(e.toString()),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(ctx).pop();
+                                    },
+                                    child: const Text("Okay"),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                  child: _orderButton
+                      ? const SizedBox(
+                          width: 100,
+                          height: 30,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ))
+                      : const Text(
+                          "CHECKOUT",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 30.0,
+                          ),
+                        ),
                 ),
               ),
             ),
