@@ -63,15 +63,17 @@ class Orders with ChangeNotifier {
         'https://eshop-7a11c-default-rtdb.firebaseio.com/Orders.json');
     try {
       final response = await http.get(url);
-      // print(response.body);
-      if (response.body == null) {
+      final List<Order> tempLoadedOrderFromServer = [];
+      final checker = json.decode(response.body);
+      if (checker == null) {
         return;
       }
-
-      final List<Order> tempLoadedOrderFromServer = [];
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
-      //print(extractedData);
 
+      // if (extractedData.isEmpty) {
+      //   return;
+      // }
+      print(extractedData);
       extractedData.forEach((orderId, orderData) {
         tempLoadedOrderFromServer.add(Order(
           id: orderId,
