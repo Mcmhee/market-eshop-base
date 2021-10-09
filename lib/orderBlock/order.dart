@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:market/cartBlock/cart.dart';
@@ -9,27 +11,45 @@ class Order with ChangeNotifier {
   final double amount;
   final List<Cart> orderItems;
   final DateTime dateTime;
+  final Map<String, dynamic> creatorDetails;
+  final bool isSent;
 
   Order({
     required this.id,
     required this.amount,
     required this.orderItems,
     required this.dateTime,
+    this.isSent = false,
+    this.creatorDetails = const {
+      'creatorName': "",
+      'creatorEmail': '',
+      'creatorAddress': ''
+    },
   });
 }
 
 class Orders with ChangeNotifier {
   List<Order> _orders = [];
   List<Order> get orders => [..._orders];
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  //final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> addOrder(List<Cart> cart, double total) async {
     var url = Uri.parse(
-        'https://eshop-7a11c-default-rtdb.firebaseio.com/Orders.json');
+        'https://eshop-7a11c-default-rtdb.firebaseio.com/Orders/${_auth.currentUser!.uid}.json');
+    String address = '';
+    await _firestore
+        .collection('users')
+        .doc(_auth.currentUser!.uid)
+        .get()
+        .then((value) => address = value['address']);
     final timeStamp = DateTime.now();
     await http
         .post(url,
             body: json.encode({
               'amount': total,
+              'isSent': false,
               'orderItem': cart
                   .map((cart) => {
                         'id': cart.productId,
@@ -41,6 +61,11 @@ class Orders with ChangeNotifier {
                       })
                   .toList(),
               'dateTime': timeStamp.toIso8601String(),
+              'creatorDetails': {
+                'creatorName': _auth.currentUser!.displayName,
+                'creatorEmail': _auth.currentUser!.email,
+                'creatorAddress': address,
+              }
             }))
         .then((response) {
       _orders.insert(
@@ -60,7 +85,7 @@ class Orders with ChangeNotifier {
 
   Future<void> fetchAndSetOrders() async {
     final url = Uri.parse(
-        'https://eshop-7a11c-default-rtdb.firebaseio.com/Orders.json');
+        'https://eshop-7a11c-default-rtdb.firebaseio.com/Orders/${_auth.currentUser!.uid}.json');
     try {
       final response = await http.get(url);
       final List<Order> tempLoadedOrderFromServer = [];
@@ -101,7 +126,7 @@ class Orders with ChangeNotifier {
 
   Future<void> deleteOrder(String id) async {
     final url = Uri.parse(
-        'https://eshop-7a11c-default-rtdb.firebaseio.com/Orders/$id.json');
+        'https://eshop-7a11c-default-rtdb.firebaseio.com/Orders/${_auth.currentUser!.uid}/$id.json');
     final deletingOrderIndex =
         _orders.indexWhere((element) => element.id == id);
     var deletingOrder = _orders[deletingOrderIndex];
@@ -116,16 +141,6 @@ class Orders with ChangeNotifier {
       throw onError;
     });
     _orders.removeAt(deletingOrderIndex);
-    notifyListeners();
-  }
-
-  void clear() {
-    _orders = [];
-    notifyListeners();
-  }
-
-  void removeOrder(String productId) {
-    _orders.remove(productId);
     notifyListeners();
   }
 }

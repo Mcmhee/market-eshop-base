@@ -56,7 +56,7 @@ class WishList extends StatelessWidget {
               decoration: const BoxDecoration(color: Colors.green),
               padding: const EdgeInsets.all(5.0),
               child: Row(
-                children: <Widget>[
+                children: [
                   const Padding(
                     padding: EdgeInsets.only(left: 20.0),
                     child: Icon(Icons.add_shopping_cart, color: Colors.white),

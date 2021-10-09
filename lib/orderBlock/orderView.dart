@@ -1,8 +1,6 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import 'package:market/orderBlock/order.dart';
 import 'package:provider/provider.dart';
 

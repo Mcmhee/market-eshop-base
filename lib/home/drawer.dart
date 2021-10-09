@@ -1,5 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:market/blocks/auth_block.dart';
+import 'package:market/Authenticate/Methods.dart';
 import 'package:market/cartBlock/cart.dart';
 import 'package:market/productBlock/providers/products.dart';
 import 'package:provider/provider.dart';
@@ -13,23 +14,25 @@ class _AppDrawerState extends State<AppDrawer> {
   @override
   Widget build(BuildContext context) {
     final wishlistbanner = Provider.of<ProductsProvider>(context);
-    AuthBlock auth = Provider.of<AuthBlock>(context);
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+
     return Column(
       children: <Widget>[
-        if (auth.isLoggedIn)
-          UserAccountsDrawerHeader(
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage('assets/images/drawer-header.jpg'),
-            )),
-            currentAccountPicture: const CircleAvatar(
-              backgroundImage: NetworkImage(
-                  'https://avatars2.githubusercontent.com/u/2400215?s=120&v=4'),
-            ),
-            accountEmail: Text(auth.user['user_email']),
-            accountName: Text(auth.user['user_display_name']),
+        UserAccountsDrawerHeader(
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+            fit: BoxFit.cover,
+            image: AssetImage('assets/images/drawer-header.jpg'),
+          )),
+          currentAccountPicture: CircleAvatar(
+            backgroundImage: NetworkImage(
+                _auth.currentUser!.photoURL ??
+                    "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+                scale: 4 / 2),
           ),
+          accountEmail: Text(_auth.currentUser!.email.toString()),
+          accountName: Text(_auth.currentUser!.displayName.toString()),
+        ),
         Expanded(
           child: ListView(
             shrinkWrap: true,
@@ -126,7 +129,7 @@ class _AppDrawerState extends State<AppDrawer> {
                     color: Theme.of(context).colorScheme.secondary),
                 title: const Text('Logout'),
                 onTap: () async {
-                  await auth.logout();
+                  await logOut(context);
                 },
               )
             ],

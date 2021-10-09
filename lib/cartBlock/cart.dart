@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,6 +23,7 @@ class Cart with ChangeNotifier {
 }
 
 class Carts with ChangeNotifier {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   Map<String, Cart> _carts = {};
 
   Map<String, Cart> get carts {

@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:market/cartBlock/cart.dart';
 import 'package:market/orderBlock/order.dart';
@@ -5,25 +6,20 @@ import 'package:market/productBlock/productScreen.dart';
 import 'package:market/productBlock/product_detail.dart';
 import 'package:market/productBlock/providers/products.dart';
 import 'package:market/settings.dart';
-
 import 'package:market/wishlist.dart';
 import 'package:provider/provider.dart';
-
-import 'auth/auth.dart';
-import 'blocks/auth_block.dart';
+import 'Authenticate/autheticate.dart';
 import 'cartBlock/cartView.dart';
 import 'categorise.dart';
 import 'home/home.dart';
 import 'orderBlock/orderView.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<AuthBlock>.value(
-          value: AuthBlock(),
-        ),
         ChangeNotifierProvider.value(
           value: ProductsProvider(),
         ),
@@ -42,8 +38,8 @@ void main() {
         ),
         initialRoute: '/',
         routes: <String, WidgetBuilder>{
-          '/': (BuildContext context) => Home(),
-          '/auth': (BuildContext context) => Auth(),
+          '/': (BuildContext context) => Authenticate(),
+          '/home': (BuildContext context) => Home(),
           '/categorise': (BuildContext context) => Categorise(),
           '/wishlist': (BuildContext context) => WishList(),
           '/cart': (BuildContext context) => CartList(),

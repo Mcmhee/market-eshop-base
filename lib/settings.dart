@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Settings extends StatefulWidget {
@@ -8,6 +9,7 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
     return Scaffold(
         appBar: AppBar(
           title: const Text('Settings'),
@@ -25,10 +27,12 @@ class _SettingsState extends State<Settings> {
                     width: MediaQuery.of(context).size.width / 3,
                     height: 150.0,
                     decoration: BoxDecoration(
-                      image: const DecorationImage(
+                      image: DecorationImage(
                         fit: BoxFit.fill,
                         image: NetworkImage(
-                            "https://avatars2.githubusercontent.com/u/2400215?s=120&v=4"),
+                          _auth.currentUser!.photoURL ??
+                              "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+                        ),
                       ),
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -51,10 +55,10 @@ class _SettingsState extends State<Settings> {
               const SizedBox(
                 height: 20.0,
               ),
-              const Center(
+              Center(
                 child: Text(
-                  "John Doe",
-                  style: TextStyle(
+                  _auth.currentUser!.displayName.toString(),
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 40,
                     fontWeight: FontWeight.bold,

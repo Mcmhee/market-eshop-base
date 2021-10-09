@@ -84,6 +84,7 @@ class _CartListState extends State<CartList> {
                         decoration: const BoxDecoration(color: Colors.red),
                         padding: const EdgeInsets.all(5.0),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             const Padding(
                               padding: EdgeInsets.only(left: 20.0),
